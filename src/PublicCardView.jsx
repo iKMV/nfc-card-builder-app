@@ -22,6 +22,24 @@ function CenteredPage({ children }) {
   );
 }
 
+function CardSkeleton() {
+  return (
+    <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f1f3f5" }}>
+      <div className="card-skeleton">
+        <div className="card-skeleton__avatar" />
+        <div className="card-skeleton__bar card-skeleton__bar--name" />
+        <div className="card-skeleton__bar card-skeleton__bar--title" />
+        <div className="card-skeleton__rows">
+          <div className="card-skeleton__bar" />
+          <div className="card-skeleton__bar" />
+          <div className="card-skeleton__bar" />
+        </div>
+        <div className="card-skeleton__cta" />
+      </div>
+    </div>
+  );
+}
+
 export default function PublicCardView({ slug }) {
   const [state, setState] = useState({ status: "loading", data: null });
 
@@ -49,7 +67,7 @@ export default function PublicCardView({ slug }) {
     }
   }, [state]);
 
-  if (state.status === "loading") return <CenteredPage>Loading card…</CenteredPage>;
+  if (state.status === "loading") return <CardSkeleton />;
   if (state.status === "not-found") return <CenteredPage>This card doesn't exist. Check the link and try again.</CenteredPage>;
   if (state.status === "error") return <CenteredPage>Couldn't load this card. Check your connection and try again.</CenteredPage>;
 

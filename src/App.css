@@ -856,11 +856,24 @@
   max-width: 340px;
   perspective: 1600px;
   border-radius: 20px;
-  transition: box-shadow 0.2s ease;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  animation: card-reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card-preview__card:hover {
   box-shadow: 0 0 0 4px rgba(127, 127, 127, 0.12);
+}
+
+@media (hover: hover) {
+  .card-preview__card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 0 4px rgba(127, 127, 127, 0.12), 0 20px 40px rgba(15, 23, 42, 0.16);
+  }
+}
+
+@keyframes card-reveal {
+  from { opacity: 0; transform: translateY(18px) scale(0.97); }
+  to { opacity: 1; transform: none; }
 }
 
 @media (min-width: 1024px) {
@@ -934,6 +947,7 @@
 .card-preview__name {
   font-size: 21px;
   font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .card-preview__title {
@@ -962,10 +976,17 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 0;
+  padding: 8px 6px;
+  margin: 0 -6px;
+  border-radius: 9px;
   font-size: 13px;
   text-decoration: none;
   color: inherit;
+  transition: background 0.15s ease;
+}
+
+a.card-preview__row:hover {
+  background: rgba(127, 127, 127, 0.1);
 }
 
 .card-preview__row span {
@@ -993,18 +1014,37 @@
   font-size: 12px;
   font-weight: 700;
   text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+a.card-preview__social:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
 }
 
 .card-preview__cta {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin-top: 22px;
-  padding: 12px 0;
+  padding: 13px 0;
   border-radius: 12px;
   font-size: 15px;
   font-weight: 600;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+a.card-preview__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+}
+
+a.card-preview__cta:active {
+  transform: translateY(0);
 }
 
 .card-preview__qr-label {
@@ -1049,4 +1089,71 @@
   font-size: 13px;
   line-height: 1.5;
   color: var(--nfc-muted);
+}
+
+/* ==========================================================================
+   Card skeleton — shown on the public page while its data loads
+   ========================================================================== */
+.card-skeleton {
+  width: 100%;
+  max-width: 340px;
+  padding: 32px 22px;
+  border-radius: 20px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.card-skeleton__avatar {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+}
+
+.card-skeleton__bar {
+  height: 12px;
+  margin: 0 auto;
+  border-radius: 6px;
+}
+
+.card-skeleton__bar--name {
+  width: 60%;
+  height: 20px;
+  margin-bottom: 10px;
+}
+
+.card-skeleton__bar--title {
+  width: 40%;
+  margin-bottom: 24px;
+}
+
+.card-skeleton__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.card-skeleton__rows .card-skeleton__bar {
+  width: 100%;
+}
+
+.card-skeleton__cta {
+  height: 46px;
+  border-radius: 12px;
+}
+
+.card-skeleton__avatar,
+.card-skeleton__bar,
+.card-skeleton__cta {
+  background: linear-gradient(90deg, #eceef1 25%, #f6f7f8 37%, #eceef1 63%);
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
 }

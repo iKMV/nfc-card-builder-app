@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { THEMES, SOCIALS, getShareUrl, generateVCard } from "./cardModel";
+import { THEMES, SOCIALS, SOCIAL_ICON_SVG, SAVE_ICON_SVG, getShareUrl, generateVCard } from "./cardModel";
 
 // Renders a phone/email/website row as a real link when `live`, or a plain
 // div (today's decorative-mockup behavior) otherwise.
@@ -115,13 +115,15 @@ export default function CardPreview({ data, theme, live = false }) {
                       rel="noopener"
                       onClick={(e) => e.stopPropagation()}
                       style={{ background: t.accent, color: t.accentText }}
-                    >
-                      {s.icon}
-                    </a>
+                      dangerouslySetInnerHTML={{ __html: SOCIAL_ICON_SVG[s.key] }}
+                    />
                   ) : (
-                    <div key={s.key} className="card-preview__social" style={{ background: t.accent, color: t.accentText }}>
-                      {s.icon}
-                    </div>
+                    <div
+                      key={s.key}
+                      className="card-preview__social"
+                      style={{ background: t.accent, color: t.accentText }}
+                      dangerouslySetInnerHTML={{ __html: SOCIAL_ICON_SVG[s.key] }}
+                    />
                   )
                 )}
               </div>
@@ -135,10 +137,14 @@ export default function CardPreview({ data, theme, live = false }) {
                 onClick={(e) => e.stopPropagation()}
                 style={{ background: t.accent, color: t.accentText }}
               >
+                <span dangerouslySetInnerHTML={{ __html: SAVE_ICON_SVG }} />
                 Save Contact
               </a>
             ) : (
-              <div className="card-preview__cta" style={{ background: t.accent, color: t.accentText }}>Save Contact</div>
+              <div className="card-preview__cta" style={{ background: t.accent, color: t.accentText }}>
+                <span dangerouslySetInnerHTML={{ __html: SAVE_ICON_SVG }} />
+                Save Contact
+              </div>
             )}
           </div>
 
