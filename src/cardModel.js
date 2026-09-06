@@ -224,9 +224,25 @@ function orgField(d) {
   return `ORG:${d.company || ""}${d.department ? ";" + d.department : ""}`;
 }
 
+// vCard 3.0 requires the structured N property (Family;Given;Additional;
+// Prefix;Suffix) alongside FN — FN alone is only a display string. Contacts
+// apps (iOS Contacts especially) map their actual First/Last name fields to
+// N, not FN, so a vCard missing it imports with a blank name even though FN
+// was set. There's no first/last split in the builder (just one "Full Name"
+// field), so this heuristically treats the last word as the family name and
+// everything before it as given name(s) — matches how most real names sort.
+function nameField(fullName) {
+  const parts = (fullName || "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "N:;;;;";
+  if (parts.length === 1) return `N:;${parts[0]};;;`;
+  const family = parts[parts.length - 1];
+  const given = parts.slice(0, -1).join(" ");
+  return `N:${family};${given};;;`;
+}
+
 export function generateVCard(d) {
   return [
-    "BEGIN:VCARD", "VERSION:3.0", `FN:${d.name}`,
+    "BEGIN:VCARD", "VERSION:3.0", nameField(d.name), `FN:${d.name}`,
     d.title ? `TITLE:${d.title}` : "", orgField(d),
     d.phone ? `TEL;TYPE=CELL:${d.phone}` : "", d.email ? `EMAIL:${d.email}` : "",
     d.website ? `URL:${d.website.startsWith("http") ? d.website : "https://" + d.website}` : "",
@@ -238,7 +254,7 @@ export function generateVCard(d) {
 
 export function generateNfcVCard(d) {
   return [
-    "BEGIN:VCARD", "VERSION:3.0", `FN:${d.name}`,
+    "BEGIN:VCARD", "VERSION:3.0", nameField(d.name), `FN:${d.name}`,
     d.title ? `TITLE:${d.title}` : "", orgField(d),
     d.phone ? `TEL:${d.phone}` : "", d.email ? `EMAIL:${d.email}` : "",
     d.website ? `URL:${d.website.startsWith("http") ? d.website : "https://" + d.website}` : "",
