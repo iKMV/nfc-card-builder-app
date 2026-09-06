@@ -240,13 +240,40 @@ function nameField(fullName) {
   return `N:${family};${given};;;`;
 }
 
+// RFC 2425/2426 line folding: a property line longer than 75 octets must be
+// split across multiple physical lines, each continuation line starting
+// with a single leading space (unfolded by stripping that one space back
+// out). Slicing the *whole* line — property name, params, and all — into
+// fixed-width chunks naturally puts the right number of data characters on
+// line 1 alongside the "PHOTO;ENCODING=b;TYPE=...:" prefix, so there's no
+// need to special-case the first chunk.
+function foldLine(line, width = 75) {
+  const chunks = [];
+  for (let i = 0; i < line.length; i += width) chunks.push(line.slice(i, i + width));
+  return chunks.join("\r\n ");
+}
+
+// Embeds the profile photo (already downscaled client-side to a small JPEG
+// data URL — see resizeImageFile in BuilderApp.jsx) as a base64 PHOTO
+// property, so "Save Contact" actually saves the picture too, not just
+// text fields. Deliberately NOT used by generateNfcVCard — that vCard has
+// to fit in a few hundred bytes to physically write to an NFC chip, and a
+// photo would blow that budget by orders of magnitude.
+function photoField(d) {
+  if (!d.photo) return "";
+  const match = /^data:image\/([a-zA-Z0-9.+-]+);base64,([A-Za-z0-9+/=]+)$/.exec(d.photo);
+  if (!match) return "";
+  const type = match[1].toUpperCase().replace("JPG", "JPEG");
+  return foldLine(`PHOTO;ENCODING=b;TYPE=${type}:${match[2]}`);
+}
+
 export function generateVCard(d) {
   return [
     "BEGIN:VCARD", "VERSION:3.0", nameField(d.name), `FN:${d.name}`,
     d.title ? `TITLE:${d.title}` : "", orgField(d),
     d.phone ? `TEL;TYPE=CELL:${d.phone}` : "", d.email ? `EMAIL:${d.email}` : "",
     d.website ? `URL:${d.website.startsWith("http") ? d.website : "https://" + d.website}` : "",
-    d.bio ? `NOTE:${d.bio}` : "",
+    d.bio ? `NOTE:${d.bio}` : "", photoField(d),
     ...SOCIALS.filter((s) => d.socials[s.key]).map((s) => `X-SOCIALPROFILE;TYPE=${s.label}:${s.prefix}${d.socials[s.key]}`),
     "END:VCARD",
   ].filter(Boolean).join("\r\n");
