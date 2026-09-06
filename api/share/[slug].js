@@ -54,8 +54,8 @@ export default async function handler(req, res) {
   const descriptionParts = [cardData?.title, cardData?.company].filter(Boolean);
   const description = cardData
     ? (descriptionParts.length ? descriptionParts.join(" at ") : "View this digital business card.")
-    : "Design a responsive digital business card and write it straight to an NFC tag — works online and offline.";
-  const pageTitle = cardData ? `${name} — Contact` : "NFC Card Builder";
+    : "TapKonek turns a single NFC card into a living digital business card. Tap the card, open a profile, save the contact — and whenever your details change, the same card keeps working.";
+  const pageTitle = cardData ? `${name} — Contact` : "TapKonek";
   const canonicalUrl = typeof slug === "string" && slug ? `${origin}/c/${encodeURIComponent(slug)}` : origin;
   const imageUrl = `${origin}/og-card.png`;
 
@@ -66,6 +66,7 @@ export default async function handler(req, res) {
   );
   const socialTags = `
     <meta property="og:type" content="profile">
+    <meta property="og:site_name" content="TapKonek">
     <meta property="og:title" content="${escapeHtml(name)}">
     <meta property="og:description" content="${escapeHtml(description)}">
     <meta property="og:url" content="${escapeHtml(canonicalUrl)}">

@@ -315,10 +315,10 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
       <header className="app-header">
         <div className="app-header__inner">
           <div className="app-header__brand">
-            <span className="app-header__logo">⚡</span>
+            <img className="app-header__logo" src="/logo-icon.png" alt="TapKonek" />
             <div className="app-header__text">
-              <h1 className="app-header__title">NFC Card Builder</h1>
-              <p className="app-header__subtitle">Design your digital business card · Online + Offline</p>
+              <h1 className="app-header__title">TapKonek</h1>
+              <p className="app-header__subtitle">Connect with a Tap · Online + Offline</p>
             </div>
           </div>
           <span className="app-header__badge"><span className="dot" />Live preview</span>

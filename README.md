@@ -1,8 +1,12 @@
-# NFC Card Builder
+# TapKonek
 
-Design a responsive digital business card and either export it as a
-standalone offline HTML file, or publish it live — one link that stays the
-same forever, with its content editable anytime via a private edit link.
+*Connect with a Tap.*
+
+TapKonek turns a single NFC card into a living digital business card. Tap
+the card, open a profile, save the contact — and whenever your details
+change, the same card keeps working. Cards can also be exported as a
+standalone offline HTML file instead of published live, if you'd rather
+self-host.
 
 ## Local development
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import BuilderApp from "./BuilderApp";
 import PublicCardView from "./PublicCardView";
+import PrivacyPage from "./PrivacyPage";
 
 // Deliberately no react-router dependency here — the app only ever has 3
 // real routes, and that library churns its API surface across major
@@ -20,6 +21,9 @@ function parseRoute(pathname, search) {
   if (viewMatch) {
     return { view: "public", slug: decodeURIComponent(viewMatch[1]) };
   }
+  if (pathname === "/privacy" || pathname === "/privacy/") {
+    return { view: "privacy" };
+  }
   return { view: "not-found" };
 }
 
@@ -38,6 +42,7 @@ export default function Router() {
   if (route.view === "create") return <BuilderApp key="create" mode="create" />;
   if (route.view === "edit") return <BuilderApp key={route.slug} mode="edit" slug={route.slug} editToken={route.editToken} />;
   if (route.view === "public") return <PublicCardView key={route.slug} slug={route.slug} />;
+  if (route.view === "privacy") return <PrivacyPage />;
 
   return (
     <div

@@ -2,6 +2,13 @@
 // and the server-side API validation (api/_lib/validate.js imports SOCIALS
 // and THEMES from here for its whitelist checks).
 
+// The canonical TapKonek app URL — needed here (rather than a relative link)
+// because generatePWAHTML() produces a fully portable, standalone HTML file
+// that people host wherever they like (GitHub Pages, Netlify, their own
+// domain, ...); a relative "/privacy" link would 404 on any of those. If
+// this app ever moves to a custom domain, update it here.
+export const APP_URL = "https://nfc-card-builder-app.vercel.app";
+
 export const THEMES = {
   minimal: {
     name: "Minimal",
@@ -210,7 +217,12 @@ h1{font-size:24px;font-weight:700;margin-bottom:4px;letter-spacing:-.01em}
   .si:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,.18)}
   .sv:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.28)}
   .r a:hover{text-decoration:underline}
+  .pv:hover{opacity:1}
 }
+.ft{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:18px;padding-top:14px;border-top:1px solid rgba(127,127,127,.15);font-size:11px}
+.bd{display:flex;align-items:center;gap:6px;font-weight:600;color:${t.sub}}
+.bd img{height:14px;width:auto;object-fit:contain}
+.pv{font-size:10.5px;text-decoration:underline;opacity:.85;color:${t.sub}}
 .ob{position:fixed;bottom:12px;right:12px;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;background:${t.accent};color:${t.accentText};opacity:0;transition:opacity .3s;pointer-events:none}
 .ob.sh{opacity:1}
 </style>
@@ -232,6 +244,10 @@ h1{font-size:24px;font-weight:700;margin-bottom:4px;letter-spacing:-.01em}
       </div>
       ${socialLinks ? `<div class="sc">${socialLinks}</div>` : ""}
       <a class="sv" href="data:text/vcard;base64,${vcB64}" download="${data.name.replace(/\s+/g, "_")}.vcf" onclick="event.stopPropagation()">${SAVE_ICON_SVG}Save Contact</a>
+      <div class="ft">
+        <div class="bd"><img src="${APP_URL}/logo-icon.png" alt="">TapKonek — Connect with a Tap.</div>
+        <a class="pv" href="${APP_URL}/privacy" target="_blank" rel="noopener" onclick="event.stopPropagation()">Privacy</a>
+      </div>
     </div>
     <div class="cq">
       <div class="ttl">Scan to view this card</div>

@@ -146,6 +146,21 @@ export default function CardPreview({ data, theme, live = false }) {
                 Save Contact
               </div>
             )}
+
+            <div className="card-preview__footer">
+              <div className="card-preview__brand" style={{ color: t.sub }}>
+                <img className="card-preview__brand-icon" src="/logo-icon.png" alt="" />
+                TapKonek — Connect with a Tap.
+              </div>
+              <a
+                className="card-preview__privacy"
+                href="/privacy"
+                onClick={(e) => e.stopPropagation()}
+                style={{ color: t.sub }}
+              >
+                Privacy
+              </a>
+            </div>
           </div>
 
           <div className="card-preview__face card-preview__face--back" style={faceStyle}>
