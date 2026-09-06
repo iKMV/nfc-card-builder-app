@@ -7,7 +7,7 @@
 // that people host wherever they like (GitHub Pages, Netlify, their own
 // domain, ...); a relative "/privacy" link would 404 on any of those. If
 // this app ever moves to a custom domain, update it here.
-export const APP_URL = "https://nfc-card-builder-app.vercel.app";
+export const APP_URL = "https://tap-konek-app.vercel.app";
 
 export const THEMES = {
   minimal: {
