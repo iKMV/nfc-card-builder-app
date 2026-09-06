@@ -2,45 +2,45 @@ import { getRedis } from "./_lib/redis.js";
 import { validateCardData } from "./_lib/validate.js";
 import { createCardWithUniqueSlug, generateEditToken, hashEditToken, SlugExhaustedError } from "./_lib/slug.js";
 
-// A single default handler branching on request.method (rather than named
-// GET/POST exports) — the safer, long-established Vercel Functions
-// convention for a plain (non-Next.js) project, using the standard Web
-// Request/Response API.
-export default async function handler(request) {
-  if (request.method !== "POST") {
-    return Response.json({ error: "Method not allowed" }, { status: 405 });
+// Classic Vercel Node.js Function signature — (req, res), not the newer
+// Fetch-API (request) => Response style. Confirmed via a live deployment:
+// the Fetch-style handler was invoked but its returned Response was
+// silently discarded, leaving every request hanging until
+// FUNCTION_INVOCATION_TIMEOUT. This (req, res) form is the older,
+// long-stable convention and is what's actually being used here.
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
   }
 
   if (process.env.BUILDER_ACCESS_CODE) {
-    const provided = request.headers.get("x-builder-access-code");
+    const provided = req.headers["x-builder-access-code"];
     if (provided !== process.env.BUILDER_ACCESS_CODE) {
-      return Response.json({ error: "Access code required" }, { status: 403 });
+      res.status(403).json({ error: "Access code required" });
+      return;
     }
   }
 
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return Response.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
-
-  const result = validateCardData(body?.data);
+  const body = req.body || {};
+  const result = validateCardData(body.data);
   if (!result.ok) {
-    return Response.json({ error: result.error }, { status: result.status || 400 });
+    res.status(result.status || 400).json({ error: result.error });
+    return;
   }
 
   let redis;
   try {
     redis = getRedis();
   } catch (err) {
-    return Response.json({ error: err.message }, { status: 500 });
+    res.status(500).json({ error: err.message });
+    return;
   }
 
   const now = new Date().toISOString();
   const editToken = generateEditToken();
   const editTokenHash = hashEditToken(editToken);
-  const slugPrefix = typeof body?.slugPrefix === "string" ? body.slugPrefix : undefined;
+  const slugPrefix = typeof body.slugPrefix === "string" ? body.slugPrefix : undefined;
 
   try {
     const { slug } = await createCardWithUniqueSlug(redis, {
@@ -55,20 +55,19 @@ export default async function handler(request) {
       }),
     });
 
-    const origin = new URL(request.url).origin;
-    return Response.json(
-      {
-        slug,
-        editToken,
-        viewUrl: `${origin}/c/${slug}`,
-        editUrl: `${origin}/edit/${slug}?t=${editToken}`,
-      },
-      { status: 201 }
-    );
+    const proto = req.headers["x-forwarded-proto"] || "https";
+    const origin = `${proto}://${req.headers.host}`;
+    res.status(201).json({
+      slug,
+      editToken,
+      viewUrl: `${origin}/c/${slug}`,
+      editUrl: `${origin}/edit/${slug}?t=${editToken}`,
+    });
   } catch (err) {
     if (err instanceof SlugExhaustedError) {
-      return Response.json({ error: "Could not generate a unique link — try a different custom link" }, { status: 409 });
+      res.status(409).json({ error: "Could not generate a unique link — try a different custom link" });
+      return;
     }
-    return Response.json({ error: "Something went wrong publishing this card" }, { status: 500 });
+    res.status(500).json({ error: "Something went wrong publishing this card" });
   }
 }

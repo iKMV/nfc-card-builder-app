@@ -2,63 +2,62 @@ import { getRedis } from "../_lib/redis.js";
 import { validateCardData } from "../_lib/validate.js";
 import { verifyEditToken } from "../_lib/slug.js";
 
-// Slug is parsed straight from the request URL rather than relying on any
-// assumed bracket-route param injection — sidesteps uncertainty about
-// exactly how (or whether) that's exposed for a plain, non-Next.js function.
-function extractSlug(request) {
-  const { pathname } = new URL(request.url);
-  const match = pathname.match(/\/api\/cards\/([^/]+)\/?$/);
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
-export default async function handler(request) {
-  const slug = extractSlug(request);
-  if (!slug) {
-    return Response.json({ error: "Missing slug" }, { status: 400 });
+// Classic Vercel Node.js Function signature — see api/cards.js for why.
+// The bracket filename convention means Vercel supplies the dynamic
+// segment as req.query.slug.
+export default async function handler(req, res) {
+  const slug = req.query?.slug;
+  if (!slug || typeof slug !== "string") {
+    res.status(400).json({ error: "Missing slug" });
+    return;
   }
 
   let redis;
   try {
     redis = getRedis();
   } catch (err) {
-    return Response.json({ error: err.message }, { status: 500 });
+    res.status(500).json({ error: err.message });
+    return;
   }
 
-  if (request.method === "GET") {
+  if (req.method === "GET") {
     const card = await redis.get(`card:${slug}`);
-    if (!card) return Response.json({ error: "Card not found" }, { status: 404 });
-    return Response.json(
-      { slug: card.slug, createdAt: card.createdAt, updatedAt: card.updatedAt, data: card.data },
-      { status: 200, headers: { "Cache-Control": "public, max-age=0, s-maxage=30, stale-while-revalidate=300" } }
-    );
+    if (!card) {
+      res.status(404).json({ error: "Card not found" });
+      return;
+    }
+    res.setHeader("Cache-Control", "public, max-age=0, s-maxage=30, stale-while-revalidate=300");
+    res.status(200).json({ slug: card.slug, createdAt: card.createdAt, updatedAt: card.updatedAt, data: card.data });
+    return;
   }
 
-  if (request.method === "PATCH") {
-    let body;
-    try {
-      body = await request.json();
-    } catch {
-      return Response.json({ error: "Invalid JSON body" }, { status: 400 });
-    }
-
+  if (req.method === "PATCH") {
+    const body = req.body || {};
     const card = await redis.get(`card:${slug}`);
-    if (!card) return Response.json({ error: "Card not found" }, { status: 404 });
-
-    if (!verifyEditToken(body?.editToken, card.editTokenHash)) {
-      return Response.json({ error: "Invalid edit link" }, { status: 401 });
+    if (!card) {
+      res.status(404).json({ error: "Card not found" });
+      return;
     }
 
-    const result = validateCardData(body?.data);
+    if (!verifyEditToken(body.editToken, card.editTokenHash)) {
+      res.status(401).json({ error: "Invalid edit link" });
+      return;
+    }
+
+    const result = validateCardData(body.data);
     if (!result.ok) {
-      return Response.json({ error: result.error }, { status: result.status || 400 });
+      res.status(result.status || 400).json({ error: result.error });
+      return;
     }
 
     const updatedAt = new Date().toISOString();
     await redis.set(`card:${slug}`, { ...card, data: result.data, updatedAt });
 
-    const origin = new URL(request.url).origin;
-    return Response.json({ slug, updatedAt, viewUrl: `${origin}/c/${slug}` }, { status: 200 });
+    const proto = req.headers["x-forwarded-proto"] || "https";
+    const origin = `${proto}://${req.headers.host}`;
+    res.status(200).json({ slug, updatedAt, viewUrl: `${origin}/c/${slug}` });
+    return;
   }
 
-  return Response.json({ error: "Method not allowed" }, { status: 405 });
+  res.status(405).json({ error: "Method not allowed" });
 }
