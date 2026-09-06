@@ -162,6 +162,22 @@
   text-overflow: ellipsis;
 }
 
+/* Shared inline icon primitive — every hand-built SVG icon (UI_ICON_SVG /
+   SOCIAL_ICON_SVG, rendered via dangerouslySetInnerHTML) is wrapped in a
+   span with this class so it sizes and centers consistently wherever it's
+   used (tab bar, section chips, info-card titles, pills, buttons). */
+.ui-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  vertical-align: -2px;
+}
+
+.ui-icon svg {
+  display: block;
+}
+
 /* Tab bar — bottom nav on mobile, top nav on desktop */
 .tabbar {
   background: var(--nfc-surface);
@@ -197,8 +213,7 @@
 }
 
 .tabbar__icon {
-  font-size: 19px;
-  line-height: 1;
+  display: inline-flex;
 }
 
 .tabbar__label {
@@ -244,8 +259,9 @@
   .tabbar__btn.is-active {
     border-bottom-color: var(--accent);
   }
-  .tabbar__icon {
-    font-size: 16px;
+  .tabbar__icon svg {
+    width: 16px;
+    height: 16px;
   }
 }
 
@@ -377,6 +393,25 @@
   }
 }
 
+/* The live preview embedded above the editor form — the only way mobile
+   ever sees the card (there's no separate "Preview" tab/panel any more).
+   On desktop it's redundant with the sticky right column's own CardPreview,
+   so it's hidden there rather than showing the same card twice. */
+.editor-preview {
+  margin-bottom: 20px;
+}
+
+.editor-preview .card-preview {
+  min-height: 0;
+  padding: clamp(16px, 4vw, 28px) clamp(20px, 4vw, 32px) clamp(8px, 2vw, 16px);
+}
+
+@media (min-width: 1024px) {
+  .editor-preview {
+    display: none;
+  }
+}
+
 /* ==========================================================================
    Editor card
    ========================================================================== */
@@ -409,6 +444,9 @@
 }
 
 .section-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   flex: 0 0 auto;
   padding: 7px 14px;
   border: none;
@@ -462,6 +500,12 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--nfc-text-soft);
+}
+
+.field__icon-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .field input,
@@ -701,6 +745,9 @@
 }
 
 .info-card__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 15px;
   font-weight: 700;
   color: var(--nfc-text);
@@ -756,6 +803,9 @@
 }
 
 .pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: 2px 8px;
   border-radius: 10px;
   font-size: 11px;
@@ -950,9 +1000,10 @@ a.card-preview__row:hover {
 }
 
 .card-preview__row span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 24px;
-  font-size: 16px;
-  text-align: center;
   flex-shrink: 0;
 }
 

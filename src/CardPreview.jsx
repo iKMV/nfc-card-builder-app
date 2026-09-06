@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { THEMES, SOCIALS, SOCIAL_ICON_SVG, SAVE_ICON_SVG, getShareUrl, generateVCard, formatTitleLine } from "./cardModel";
+import { THEMES, SOCIALS, SOCIAL_ICON_SVG, SAVE_ICON_SVG, UI_ICON_SVG, getShareUrl, generateVCard, formatTitleLine } from "./cardModel";
 
 // The "TapKonek — Connect with a Tap. / Privacy" attribution shown at the
 // bottom of both the front (details) and back (QR) faces.
@@ -106,12 +106,12 @@ export default function CardPreview({ data, theme, live = false }) {
             <div className="card-preview__rows">
               {data.phone && (
                 <ContactRow href={`tel:${data.phone}`} live={live} style={{ color: t.text, borderBottom: `1px solid ${t.border}` }}>
-                  <span>📱</span>{data.phone}
+                  <span style={{ color: t.sub }} dangerouslySetInnerHTML={{ __html: UI_ICON_SVG.phone }} />{data.phone}
                 </ContactRow>
               )}
               {data.email && (
                 <ContactRow href={`mailto:${data.email}`} live={live} style={{ color: t.text, borderBottom: `1px solid ${t.border}` }}>
-                  <span>✉️</span>{data.email}
+                  <span style={{ color: t.sub }} dangerouslySetInnerHTML={{ __html: UI_ICON_SVG.envelope }} />{data.email}
                 </ContactRow>
               )}
               {data.website && (
@@ -120,7 +120,7 @@ export default function CardPreview({ data, theme, live = false }) {
                   live={live}
                   style={{ color: t.text, borderBottom: `1px solid ${t.border}` }}
                 >
-                  <span>🌐</span>{data.website}
+                  <span style={{ color: t.sub }} dangerouslySetInnerHTML={{ __html: UI_ICON_SVG.globe }} />{data.website}
                 </ContactRow>
               )}
             </div>

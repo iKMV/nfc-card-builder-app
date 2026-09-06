@@ -1,25 +1,31 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
-import { THEMES, SOCIALS, DEFAULT, BLANK, generateNfcVCard, generateVCard, generatePWAHTML, getShareUrl, slugifyName } from "./cardModel";
+import { THEMES, SOCIALS, SOCIAL_ICON_SVG, UI_ICON_SVG, DEFAULT, BLANK, generateNfcVCard, generateVCard, generatePWAHTML, getShareUrl, slugifyName } from "./cardModel";
 import CardPreview from "./CardPreview";
 import CopyField from "./CopyField";
 
 const ACCESS_CODE_KEY = "nfc_builder_access_code";
 
 const TABS = [
-  { id: "editor", icon: "✏️", label: "Editor" },
-  { id: "preview", icon: "👁️", label: "Preview" },
-  { id: "nfc", icon: "📡", label: "NFC" },
-  { id: "qr", icon: "▦", label: "QR" },
+  { id: "editor", icon: UI_ICON_SVG.pencil, label: "Editor" },
+  { id: "nfc", icon: UI_ICON_SVG.wifi, label: "NFC" },
+  { id: "qr", icon: UI_ICON_SVG.qrcode, label: "QR" },
 ];
 
 const SECTIONS = [
-  { id: "personal", label: "👤 Personal" },
-  { id: "contact", label: "📞 Contact" },
-  { id: "socials", label: "🔗 Socials" },
-  { id: "appearance", label: "🎨 Theme" },
-  { id: "export", label: "📤 Export" },
+  { id: "personal", icon: UI_ICON_SVG.user, label: "Personal" },
+  { id: "contact", icon: UI_ICON_SVG.phone, label: "Contact" },
+  { id: "socials", icon: UI_ICON_SVG.link, label: "Socials" },
+  { id: "appearance", icon: UI_ICON_SVG.palette, label: "Theme" },
+  { id: "export", icon: UI_ICON_SVG.upload, label: "Export" },
 ];
+
+// Renders one of the hand-built stroke icons (UI_ICON_SVG / SOCIAL_ICON_SVG)
+// as an inline span — the shared building block for every icon+label pairing
+// below (tab bar, section chips, info-card titles, pills, button states).
+function Icon({ svg, style }) {
+  return <span className="ui-icon" style={style} dangerouslySetInnerHTML={{ __html: svg }} />;
+}
 
 // Downscales an uploaded image via an offscreen canvas before it ever enters
 // React state — keeps both the exported static file and the published-card
@@ -119,18 +125,18 @@ function NfcVCardSection({ data }) {
   return (
     <div className="stack">
       <div className="info-card">
-        <div className="info-card__title">📡 NFC vCard Data (Offline)</div>
+        <div className="info-card__title"><Icon svg={UI_ICON_SVG.wifi} /> NFC vCard Data (Offline)</div>
         <div className="info-card__desc">
           Write this directly to your NFC chip. No internet needed when someone taps — their phone reads the contact info from the chip itself.
         </div>
         <div className="mono-block">{nfcVcard}</div>
         <div className="pill-row">
           <span className="byte-count" style={{ color: fits216 ? "var(--success)" : "var(--danger)" }}>{byteSize} bytes</span>
-          <span className={`pill ${fits215 ? "pill--ok" : "pill--muted"}`}>NTAG215 {fits215 ? "✅" : "❌"}</span>
-          <span className={`pill ${fits216 ? "pill--ok" : "pill--bad"}`}>NTAG216 {fits216 ? "✅" : "❌"}</span>
+          <span className={`pill ${fits215 ? "pill--ok" : "pill--muted"}`}>NTAG215 <Icon svg={fits215 ? UI_ICON_SVG.checkCircle : UI_ICON_SVG.xCircle} /></span>
+          <span className={`pill ${fits216 ? "pill--ok" : "pill--bad"}`}>NTAG216 <Icon svg={fits216 ? UI_ICON_SVG.checkCircle : UI_ICON_SVG.xCircle} /></span>
         </div>
         <button type="button" className={`btn btn-primary${copied ? " is-success" : ""}`} style={{ marginTop: 12 }} onClick={copy}>
-          {copied ? "✓ Copied!" : "Copy vCard Data"}
+          {copied ? <><Icon svg={UI_ICON_SVG.check} /> Copied!</> : "Copy vCard Data"}
         </button>
       </div>
 
@@ -149,13 +155,13 @@ function NfcVCardSection({ data }) {
       {!fits215 && (
         <div className="info-card info-card--warning">
           <div className="info-card__desc">
-            💡 <strong>Tip:</strong> Shorten your title or company name to fit on smaller NFC chips. The offline vCard only includes essential fields to save space.
+            <Icon svg={UI_ICON_SVG.lightbulb} /> <strong>Tip:</strong> Shorten your title or company name to fit on smaller NFC chips. The offline vCard only includes essential fields to save space.
           </div>
         </div>
       )}
 
       <div className="info-card info-card--info">
-        <div className="info-card__title">🔄 Best of both worlds</div>
+        <div className="info-card__title"><Icon svg={UI_ICON_SVG.refresh} /> Best of both worlds</div>
         <div className="info-card__desc">
           For the best experience, use <strong>both</strong> methods: write your hosted URL to the NFC tag for the full rich card (with PWA offline caching), and keep a vCard-only NFC sticker as a backup for places with no signal.
         </div>
@@ -205,9 +211,12 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
   const updateSocial = useCallback((k, v) => setData((p) => ({ ...p, socials: { ...p.socials, [k]: v } })), []);
   const theme = THEMES[data.theme];
 
+  // "Editor" always brings the live preview back on desktop's sticky right
+  // column — there's no separate "Preview" destination any more (the editor
+  // already shows one), so selecting Editor is itself how you get back to it.
   const selectTab = (id) => {
     setTab(id);
-    if (id !== "editor") setRightTab(id);
+    setRightTab(id === "editor" ? "preview" : id);
   };
 
   const downloadVCard = () => {
@@ -310,7 +319,7 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
             <span className="edit-banner__label">Editing <strong>{data.name || "this"}</strong>'s card</span>
             <a className="edit-banner__link" href={published.viewUrl} target="_blank" rel="noopener">{published.viewUrl}</a>
             <button type="button" className="btn btn-upload edit-banner__save" onClick={save} disabled={saveState.status === "submitting"}>
-              {saveState.status === "submitting" ? "Saving…" : saveState.status === "success" ? "✓ Saved" : "Save changes"}
+              {saveState.status === "submitting" ? "Saving…" : saveState.status === "success" ? <><Icon svg={UI_ICON_SVG.check} /> Saved</> : "Save changes"}
             </button>
           </div>
           {saveState.status === "error" && <div className="edit-banner__error">{saveState.message}</div>}
@@ -326,7 +335,7 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
               className={`tabbar__btn${tab === t.id ? " is-active" : ""}`}
               onClick={() => selectTab(t.id)}
             >
-              <span className="tabbar__icon">{t.icon}</span>
+              <span className="tabbar__icon" dangerouslySetInnerHTML={{ __html: t.icon }} />
               <span className="tabbar__label">{t.label}</span>
             </button>
           ))}
@@ -336,6 +345,14 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
       <main className="main">
         <div className="layout">
           <section className={`panel panel--editor${tab === "editor" ? " is-active" : ""}`}>
+            {/* Always-visible live preview — mobile's Editor tab has no side-by-side
+                panel like desktop does, so the card is embedded right here instead
+                of behind a separate "Preview" destination. Hidden on desktop (see
+                App.css) where the sticky right column already shows the same
+                CardPreview without duplicating it. */}
+            <div className="editor-preview">
+              <CardPreview data={data} theme={data.theme} />
+            </div>
             <div className="editor-card">
               <div className="section-tabs">
                 {SECTIONS.map((s) => (
@@ -345,7 +362,8 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
                     className={`section-tab${section === s.id ? " is-active" : ""}`}
                     onClick={() => setSection(s.id)}
                   >
-                    {s.label}
+                    <Icon svg={s.icon} />
+                    <span>{s.label}</span>
                   </button>
                 ))}
               </div>
@@ -408,7 +426,7 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
 
                 {section === "socials" && SOCIALS.map((s) => (
                   <div className="field" key={s.key}>
-                    <label>{s.icon} {s.label}</label>
+                    <label className="field__icon-label"><Icon svg={SOCIAL_ICON_SVG[s.key]} /> {s.label}</label>
                     <div className="input-group">
                       <span className="input-group__prefix">{s.prefix.replace("https://", "")}</span>
                       <input
@@ -447,7 +465,7 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
                 {section === "export" && (
                   <div className="stack">
                     <div className="info-card">
-                      <div className="info-card__title">🌐 Publish Live Card</div>
+                      <div className="info-card__title"><Icon svg={UI_ICON_SVG.globe} /> Publish Live Card</div>
                       {!published ? (
                         <>
                           <div className="info-card__desc">
@@ -494,7 +512,7 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
                           <CopyField value={published.viewUrl} />
                           {justPublished && published.editUrl && (
                             <div className="info-card info-card--warning" style={{ marginTop: 12 }}>
-                              <div className="info-card__title">🔑 Save your edit link now</div>
+                              <div className="info-card__title"><Icon svg={UI_ICON_SVG.key} /> Save your edit link now</div>
                               <div className="info-card__desc">
                                 This is the <strong>only</strong> way to update this card later — we don't store it and can't recover it if it's lost.
                               </div>
@@ -508,7 +526,7 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
                             onClick={save}
                             disabled={saveState.status === "submitting"}
                           >
-                            {saveState.status === "submitting" ? "Saving…" : saveState.status === "success" ? "✓ Saved" : "💾 Save changes"}
+                            {saveState.status === "submitting" ? "Saving…" : saveState.status === "success" ? <><Icon svg={UI_ICON_SVG.check} /> Saved</> : "Save changes"}
                           </button>
                           {saveState.status === "error" && (
                             <div className="hint-text" style={{ color: "var(--danger)" }}>{saveState.message}</div>
@@ -518,7 +536,7 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
                     </div>
                     <div className="hint-text" style={{ textAlign: "center" }}>— or export as a static file instead —</div>
                     <div className="info-card">
-                      <div className="info-card__title">📄 Download PWA Card</div>
+                      <div className="info-card__title"><Icon svg={UI_ICON_SVG.doc} /> Download PWA Card</div>
                       <div className="info-card__desc">
                         Standalone page with <strong>Service Worker</strong>. Caches itself after first visit — works offline. Host free on GitHub Pages, Netlify, or Vercel.
                       </div>
@@ -527,20 +545,20 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
                       </button>
                     </div>
                     <div className="info-card">
-                      <div className="info-card__title">👤 Download Full vCard</div>
+                      <div className="info-card__title"><Icon svg={UI_ICON_SVG.user} /> Download Full vCard</div>
                       <div className="info-card__desc">A .vcf with all your details including socials.</div>
                       <button type="button" className="btn btn-secondary" style={{ marginTop: 12 }} onClick={downloadVCard}>
                         Download .vcf
                       </button>
                     </div>
                     <div className="info-card info-card--warning">
-                      <div className="info-card__title">⚡ NFC Setup</div>
+                      <div className="info-card__title"><Icon svg={UI_ICON_SVG.bolt} /> NFC Setup</div>
                       <ol className="steps">
                         <li>Copy your live URL above (or host your downloaded HTML file yourself)</li>
                         <li>Open <strong>NFC Tools</strong> → Write → URL</li>
                         <li>Paste link, tap Write, hold card to phone</li>
                       </ol>
-                      <div className="hint-text">💡 For fully offline cards, check the <strong>NFC tab</strong>.</div>
+                      <div className="hint-text"><Icon svg={UI_ICON_SVG.lightbulb} /> For fully offline cards, check the <strong>NFC tab</strong>.</div>
                     </div>
                   </div>
                 )}

@@ -65,6 +65,91 @@ export const THEMES = {
     border: "rgba(255,255,255,0.12)",
     font: "'Inter', system-ui, sans-serif",
   },
+  slate: {
+    name: "Slate",
+    bg: "#f1f5f9",
+    card: "#ffffff",
+    text: "#0f172a",
+    sub: "#64748b",
+    accent: "#475569",
+    accentText: "#ffffff",
+    border: "#e2e8f0",
+    font: "'Inter', system-ui, sans-serif",
+  },
+  royal: {
+    name: "Royal",
+    bg: "linear-gradient(135deg, #1e1b4b 0%, #4c1d95 60%, #6d28d9 100%)",
+    card: "rgba(255,255,255,0.08)",
+    text: "#f5f3ff",
+    sub: "#c4b5fd",
+    accent: "#fbbf24",
+    accentText: "#1e1b4b",
+    border: "rgba(255,255,255,0.14)",
+    font: "'Inter', system-ui, sans-serif",
+  },
+  rose: {
+    name: "Rose",
+    bg: "linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fecdd3 100%)",
+    card: "rgba(255,255,255,0.65)",
+    text: "#881337",
+    sub: "#be123c",
+    accent: "#e11d48",
+    accentText: "#ffffff",
+    border: "rgba(190,18,60,0.16)",
+    font: "'Inter', system-ui, sans-serif",
+  },
+  noir: {
+    name: "Noir",
+    bg: "#0a0a0a",
+    card: "rgba(255,255,255,0.05)",
+    text: "#f5f5f4",
+    sub: "#a8a29e",
+    accent: "#d4af37",
+    accentText: "#0a0a0a",
+    border: "rgba(212,175,55,0.25)",
+    font: "'Georgia', serif",
+  },
+  arctic: {
+    name: "Arctic",
+    bg: "linear-gradient(160deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%)",
+    card: "rgba(255,255,255,0.72)",
+    text: "#0c4a6e",
+    sub: "#0369a1",
+    accent: "#0284c7",
+    accentText: "#ffffff",
+    border: "rgba(2,132,199,0.16)",
+    font: "'Inter', system-ui, sans-serif",
+  },
+};
+
+// Small vector icons for the builder's own chrome (tab bar, section chips,
+// info-card headings, contact-row glyphs on the card face itself) — hand-
+// built rather than pulling in the actual Font Awesome library, for the same
+// reason SOCIAL_ICON_SVG below is hand-built: full control over size/color
+// via currentColor, zero added dependency/bundle weight, and one consistent
+// stroke-based visual style shared by every icon in the app (matches
+// SAVE_ICON_SVG's existing look). Plain markup strings, not JSX — used both
+// by React (dangerouslySetInnerHTML) and generatePWAHTML's string template.
+export const UI_ICON_SVG = {
+  pencil: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,
+  wifi: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.8a11 11 0 0 1 15 0"/><path d="M7.8 16.3a6.5 6.5 0 0 1 8.4 0"/><circle cx="12" cy="19.5" r="1.15" fill="currentColor" stroke="none"/></svg>`,
+  qrcode: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><path d="M14 14h3v3h-3zM19 14.5h1.6M14 19h1.6M19 19h2v2h-2z" fill="currentColor" stroke="none"/></svg>`,
+  user: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.4-4.6 5-6.4 8-6.4s6.6 1.8 8 6.4"/></svg>`,
+  phone: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 3.5 9.3 4l1.2 4-2 1.6a12.5 12.5 0 0 0 6 6l1.5-2 4 1.3v2.7c0 1.2-1 2.1-2.2 2C10.6 18.7 5.3 13.4 4.6 6.2c-.1-1.2.8-2.2 2-2.7Z"/></svg>`,
+  envelope: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg>`,
+  globe: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.4 4 5.6 4 9s-1.4 6.6-4 9c-2.6-2.4-4-5.6-4-9s1.4-6.6 4-9Z"/></svg>`,
+  link: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M11 6.3 12.4 5a4 4 0 0 1 5.6 5.7L16.5 12"/><path d="M13 17.7 11.6 19a4 4 0 0 1-5.6-5.7L7.5 12"/></svg>`,
+  palette: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.9-.9 1.9-1.9 0-.5-.2-.9-.5-1.3-.3-.3-.5-.7-.5-1.2 0-1 .9-1.9 1.9-1.9H16a4 4 0 0 0 4-4A8 8 0 0 0 12 3Z"/><circle cx="7.3" cy="10.8" r="1.15" fill="currentColor" stroke="none"/><circle cx="10.5" cy="7.2" r="1.15" fill="currentColor" stroke="none"/><circle cx="15" cy="7.8" r="1.15" fill="currentColor" stroke="none"/></svg>`,
+  upload: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M7.5 8.5 12 4l4.5 4.5"/><path d="M4 15v3.5A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5V15"/></svg>`,
+  lock: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="11" width="15" height="9.5" rx="2"/><path d="M8 11V7.3a4 4 0 0 1 8 0V11"/></svg>`,
+  doc: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 2h7l4 4v16h-11Z"/><path d="M13.5 2v4h4"/><path d="M9 13.2h6M9 17h6"/></svg>`,
+  bolt: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>`,
+  refresh: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10a7.5 7.5 0 0 1 13-4.6M19.5 3.8v5h-5"/><path d="M19.5 14a7.5 7.5 0 0 1-13 4.6M4.5 20.2v-5h5"/></svg>`,
+  key: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.3"/><path d="M10.7 12.3 19.5 3.5"/><path d="M16.7 6.3l2.6 2.6"/><path d="M13.8 9.2l2.3 2.3"/></svg>`,
+  lightbulb: `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 18h5M10.3 21.5h3.4"/><path d="M12 2a6.8 6.8 0 0 0-3.9 12.4c.6.5.9 1.2.9 2.1h6c0-.9.3-1.6.9-2.1A6.8 6.8 0 0 0 12 2Z"/></svg>`,
+  checkCircle: `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M7.7 12.5 10.5 15.3 16.3 9"/></svg>`,
+  xCircle: `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>`,
+  check: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 9.5 17 19 7"/></svg>`,
 };
 
 // Small vector icons for the card's social badges — used identically by the
@@ -87,13 +172,13 @@ export const SOCIAL_ICON_SVG = {
 export const SAVE_ICON_SVG = `<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10m0 0l-4-4m4 4l4-4M5 18h14"/></svg>`;
 
 export const SOCIALS = [
-  { key: "linkedin", label: "LinkedIn", icon: "in", prefix: "https://linkedin.com/in/" },
-  { key: "instagram", label: "Instagram", icon: "IG", prefix: "https://instagram.com/" },
-  { key: "twitter", label: "X / Twitter", icon: "𝕏", prefix: "https://x.com/" },
-  { key: "facebook", label: "Facebook", icon: "f", prefix: "https://facebook.com/" },
-  { key: "github", label: "GitHub", icon: "<>", prefix: "https://github.com/" },
-  { key: "tiktok", label: "TikTok", icon: "♪", prefix: "https://tiktok.com/@" },
-  { key: "youtube", label: "YouTube", icon: "▶", prefix: "https://youtube.com/@" },
+  { key: "linkedin", label: "LinkedIn", prefix: "https://linkedin.com/in/" },
+  { key: "instagram", label: "Instagram", prefix: "https://instagram.com/" },
+  { key: "twitter", label: "X / Twitter", prefix: "https://x.com/" },
+  { key: "facebook", label: "Facebook", prefix: "https://facebook.com/" },
+  { key: "github", label: "GitHub", prefix: "https://github.com/" },
+  { key: "tiktok", label: "TikTok", prefix: "https://tiktok.com/@" },
+  { key: "youtube", label: "YouTube", prefix: "https://youtube.com/@" },
 ];
 
 // An empty card shape — used as the merge base when loading an existing
@@ -246,7 +331,7 @@ h1{font-size:24px;font-weight:700;margin-bottom:4px;letter-spacing:-.01em}
 .co{color:${t.accent};font-size:14px;font-weight:600;margin-bottom:12px}
 .bi{color:${t.sub};font-size:14px;line-height:1.5;margin-bottom:24px}
 .r{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid ${t.border};font-size:14px}
-.r span{font-size:18px;width:28px;text-align:center;flex-shrink:0}
+.r span{display:inline-flex;align-items:center;justify-content:center;width:28px;flex-shrink:0;color:${t.sub}}
 .r a{color:${t.text};text-decoration:none;word-break:break-all}
 .sc{display:flex;gap:10px;justify-content:center;margin-top:24px;flex-wrap:wrap}
 .si{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:${t.accent};color:${t.accentText};text-decoration:none;font-weight:700;font-size:13px;transition:transform .15s,box-shadow .15s}
@@ -263,7 +348,8 @@ h1{font-size:24px;font-weight:700;margin-bottom:4px;letter-spacing:-.01em}
 .bd{display:flex;align-items:center;gap:6px;font-weight:600;color:${t.sub}}
 .bd img{height:14px;width:auto;object-fit:contain}
 .pv{font-size:10.5px;text-decoration:underline;opacity:.85;color:${t.sub}}
-.ob{position:fixed;bottom:12px;right:12px;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;background:${t.accent};color:${t.accentText};opacity:0;transition:opacity .3s;pointer-events:none}
+.ob{position:fixed;bottom:12px;right:12px;display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;background:${t.accent};color:${t.accentText};opacity:0;transition:opacity .3s;pointer-events:none}
+.ob svg{width:13px;height:13px}
 .ob.sh{opacity:1}
 </style>
 </head>
@@ -278,9 +364,9 @@ h1{font-size:24px;font-weight:700;margin-bottom:4px;letter-spacing:-.01em}
       ${data.company ? `<p class="co">${data.company}</p>` : ""}
       ${data.bio ? `<p class="bi">${data.bio}</p>` : ""}
       <div style="text-align:left">
-        ${data.phone ? `<div class="r"><span>📱</span><a href="tel:${data.phone}" onclick="event.stopPropagation()">${data.phone}</a></div>` : ""}
-        ${data.email ? `<div class="r"><span>✉️</span><a href="mailto:${data.email}" onclick="event.stopPropagation()">${data.email}</a></div>` : ""}
-        ${data.website ? `<div class="r"><span>🌐</span><a href="${siteUrl}" target="_blank" onclick="event.stopPropagation()">${data.website}</a></div>` : ""}
+        ${data.phone ? `<div class="r"><span>${UI_ICON_SVG.phone}</span><a href="tel:${data.phone}" onclick="event.stopPropagation()">${data.phone}</a></div>` : ""}
+        ${data.email ? `<div class="r"><span>${UI_ICON_SVG.envelope}</span><a href="mailto:${data.email}" onclick="event.stopPropagation()">${data.email}</a></div>` : ""}
+        ${data.website ? `<div class="r"><span>${UI_ICON_SVG.globe}</span><a href="${siteUrl}" target="_blank" onclick="event.stopPropagation()">${data.website}</a></div>` : ""}
       </div>
       ${socialLinks ? `<div class="sc">${socialLinks}</div>` : ""}
       <a class="sv" href="data:text/vcard;base64,${vcB64}" download="${data.name.replace(/\s+/g, "_")}.vcf" onclick="event.stopPropagation()">${SAVE_ICON_SVG}Save Contact</a>
@@ -293,7 +379,7 @@ h1{font-size:24px;font-weight:700;margin-bottom:4px;letter-spacing:-.01em}
     </div>
   </div>
 </div>
-<div class="ob" id="ob">⚡ Available offline</div>
+<div class="ob" id="ob">${UI_ICON_SVG.bolt}Available offline</div>
 <script>
 (function(){
   var cf = document.getElementById('cf');

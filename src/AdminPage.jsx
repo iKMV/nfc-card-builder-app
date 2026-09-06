@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import CopyField from "./CopyField";
+import { UI_ICON_SVG } from "./cardModel";
 
 const STORAGE_KEY = "tapkonek_admin_password";
 
@@ -121,7 +122,9 @@ export default function AdminPage() {
         <main className="main">
           <div style={{ maxWidth: 420, margin: "0 auto", padding: "40px 20px" }}>
             <form className="info-card" onSubmit={submitPassword}>
-              <div className="info-card__title">🔒 Admin access</div>
+              <div className="info-card__title">
+                <span className="ui-icon" dangerouslySetInnerHTML={{ __html: UI_ICON_SVG.lock }} /> Admin access
+              </div>
               <div className="info-card__desc">
                 Enter the admin password to view published cards and reset a lost edit link.
               </div>
