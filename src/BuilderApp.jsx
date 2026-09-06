@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
-import { THEMES, SOCIALS, DEFAULT, generateNfcVCard, generateVCard, generatePWAHTML, getShareUrl, slugifyName } from "./cardModel";
+import { THEMES, SOCIALS, DEFAULT, BLANK, generateNfcVCard, generateVCard, generatePWAHTML, getShareUrl, slugifyName } from "./cardModel";
 import CardPreview from "./CardPreview";
 
 const ACCESS_CODE_KEY = "nfc_builder_access_code";
@@ -214,7 +214,7 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
         if (res.status === 404) { setLoadState("not-found"); return; }
         if (!res.ok) { setLoadState("error"); return; }
         const json = await res.json();
-        setData((p) => ({ ...p, ...json.data }));
+        setData({ ...BLANK, ...json.data });
         setLoadState("ready");
       })
       .catch(() => { if (!cancelled) setLoadState("error"); });
@@ -381,6 +381,15 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
                     <div className="field">
                       <label>Job Title</label>
                       <input value={data.title} onChange={(e) => update("title", e.target.value)} />
+                    </div>
+                    <div className="field">
+                      <label>Department</label>
+                      <input
+                        value={data.department}
+                        onChange={(e) => update("department", e.target.value)}
+                        placeholder="e.g. IT Department"
+                      />
+                      <div className="hint-text" style={{ marginTop: 0 }}>Shown on the card as "{data.title || "Job Title"} - {data.department || "Department"}"</div>
                     </div>
                     <div className="field">
                       <label>Company</label>

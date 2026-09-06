@@ -96,9 +96,29 @@ export const SOCIALS = [
   { key: "youtube", label: "YouTube", icon: "▶", prefix: "https://youtube.com/@" },
 ];
 
+// An empty card shape — used as the merge base when loading an existing
+// published card for editing, so a field that predates a later schema
+// change (e.g. "department" didn't always exist) comes back blank rather
+// than leaking DEFAULT's example-persona placeholder text.
+export const BLANK = {
+  name: "",
+  title: "",
+  department: "",
+  company: "",
+  bio: "",
+  phone: "",
+  email: "",
+  website: "",
+  photo: null,
+  logo: null,
+  socials: {},
+  theme: "minimal",
+};
+
 export const DEFAULT = {
   name: "Alex Rivera",
   title: "Product Designer",
+  department: "Design Team",
   company: "Studio Nova",
   bio: "Crafting digital experiences that feel effortless.",
   phone: "+1 (555) 123-4567",
@@ -110,10 +130,19 @@ export const DEFAULT = {
   theme: "minimal",
 };
 
+// vCard's ORG property is natively structured as "Organization;Department"
+// (semicolon-separated) — real contacts apps (Apple/Google Contacts, etc.)
+// parse that into distinct fields, so the department rides along on ORG
+// rather than being mashed into TITLE.
+function orgField(d) {
+  if (!d.company && !d.department) return "";
+  return `ORG:${d.company || ""}${d.department ? ";" + d.department : ""}`;
+}
+
 export function generateVCard(d) {
   return [
     "BEGIN:VCARD", "VERSION:3.0", `FN:${d.name}`,
-    d.title ? `TITLE:${d.title}` : "", d.company ? `ORG:${d.company}` : "",
+    d.title ? `TITLE:${d.title}` : "", orgField(d),
     d.phone ? `TEL;TYPE=CELL:${d.phone}` : "", d.email ? `EMAIL:${d.email}` : "",
     d.website ? `URL:${d.website.startsWith("http") ? d.website : "https://" + d.website}` : "",
     d.bio ? `NOTE:${d.bio}` : "",
@@ -125,11 +154,17 @@ export function generateVCard(d) {
 export function generateNfcVCard(d) {
   return [
     "BEGIN:VCARD", "VERSION:3.0", `FN:${d.name}`,
-    d.title ? `TITLE:${d.title}` : "", d.company ? `ORG:${d.company}` : "",
+    d.title ? `TITLE:${d.title}` : "", orgField(d),
     d.phone ? `TEL:${d.phone}` : "", d.email ? `EMAIL:${d.email}` : "",
     d.website ? `URL:${d.website.startsWith("http") ? d.website : "https://" + d.website}` : "",
     "END:VCARD",
   ].filter(Boolean).join("\r\n");
+}
+
+// The card's job-title line as shown on the card face — "Title" alone,
+// "Department" alone, or "Title - Department" when both are set.
+export function formatTitleLine(d) {
+  return [d.title, d.department].filter(Boolean).join(" - ");
 }
 
 // The URL a QR code / NFC tag should point to: the hosted card's live URL
@@ -161,10 +196,15 @@ export function generatePWAHTML(data, theme) {
   const vcB64 = btoa(unescape(encodeURIComponent(generateVCard(data))));
   const siteUrl = data.website ? (data.website.startsWith("http") ? data.website : `https://${data.website}`) : "";
   const shareUrl = getShareUrl(data);
+  const titleLine = formatTitleLine(data);
   const qrBack = shareUrl
     ? `<img class="qi" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}&bgcolor=ffffff&color=000000&margin=8" alt="QR code linking to this card">
        <div class="qu">${shareUrl}</div>`
     : `<div class="qe">Add a website or email to generate a QR code</div>`;
+  const footerHtml = `<div class="ft">
+        <div class="bd"><img src="${APP_URL}/logo-icon.png" alt="">TapKonek — Connect with a Tap.</div>
+        <a class="pv" href="${APP_URL}/privacy" target="_blank" rel="noopener" onclick="event.stopPropagation()">Privacy</a>
+      </div>`;
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -234,7 +274,7 @@ h1{font-size:24px;font-weight:700;margin-bottom:4px;letter-spacing:-.01em}
       ${data.logo ? `<img class="lo" src="${data.logo}" alt="">` : ""}
       ${data.photo ? `<img class="ph" src="${data.photo}" alt="${data.name}">` : ""}
       <h1>${data.name}</h1>
-      ${data.title ? `<p class="ti">${data.title}</p>` : ""}
+      ${titleLine ? `<p class="ti">${titleLine}</p>` : ""}
       ${data.company ? `<p class="co">${data.company}</p>` : ""}
       ${data.bio ? `<p class="bi">${data.bio}</p>` : ""}
       <div style="text-align:left">
@@ -244,14 +284,12 @@ h1{font-size:24px;font-weight:700;margin-bottom:4px;letter-spacing:-.01em}
       </div>
       ${socialLinks ? `<div class="sc">${socialLinks}</div>` : ""}
       <a class="sv" href="data:text/vcard;base64,${vcB64}" download="${data.name.replace(/\s+/g, "_")}.vcf" onclick="event.stopPropagation()">${SAVE_ICON_SVG}Save Contact</a>
-      <div class="ft">
-        <div class="bd"><img src="${APP_URL}/logo-icon.png" alt="">TapKonek — Connect with a Tap.</div>
-        <a class="pv" href="${APP_URL}/privacy" target="_blank" rel="noopener" onclick="event.stopPropagation()">Privacy</a>
-      </div>
+      ${footerHtml}
     </div>
     <div class="cq">
       <div class="ttl">Scan to view this card</div>
       ${qrBack}
+      ${footerHtml}
     </div>
   </div>
 </div>

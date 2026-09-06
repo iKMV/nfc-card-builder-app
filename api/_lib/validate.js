@@ -1,6 +1,6 @@
 import { THEMES, SOCIALS } from "../../src/cardModel.js";
 
-const MAX = { name: 100, title: 200, company: 200, bio: 500, phone: 200, email: 200, website: 200, social: 100 };
+const MAX = { name: 100, title: 200, department: 200, company: 200, bio: 500, phone: 200, email: 200, website: 200, social: 100 };
 const SOCIAL_KEYS = new Set(SOCIALS.map((s) => s.key));
 const THEME_KEYS = new Set(Object.keys(THEMES));
 const MAX_BYTES = 250 * 1024;
@@ -29,6 +29,7 @@ export function validateCardData(input) {
   const data = {
     name,
     title: clamp(input.title, MAX.title),
+    department: clamp(input.department, MAX.department),
     company: clamp(input.company, MAX.company),
     bio: clamp(input.bio, MAX.bio),
     phone: clamp(input.phone, MAX.phone),

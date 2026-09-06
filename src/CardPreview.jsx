@@ -1,5 +1,26 @@
 import { useEffect, useMemo, useState } from "react";
-import { THEMES, SOCIALS, SOCIAL_ICON_SVG, SAVE_ICON_SVG, getShareUrl, generateVCard } from "./cardModel";
+import { THEMES, SOCIALS, SOCIAL_ICON_SVG, SAVE_ICON_SVG, getShareUrl, generateVCard, formatTitleLine } from "./cardModel";
+
+// The "TapKonek — Connect with a Tap. / Privacy" attribution shown at the
+// bottom of both the front (details) and back (QR) faces.
+function BrandFooter({ sub }) {
+  return (
+    <div className="card-preview__footer">
+      <div className="card-preview__brand" style={{ color: sub }}>
+        <img className="card-preview__brand-icon" src="/logo-icon.png" alt="" />
+        TapKonek — Connect with a Tap.
+      </div>
+      <a
+        className="card-preview__privacy"
+        href="/privacy"
+        onClick={(e) => e.stopPropagation()}
+        style={{ color: sub }}
+      >
+        Privacy
+      </a>
+    </div>
+  );
+}
 
 // Renders a phone/email/website row as a real link when `live`, or a plain
 // div (today's decorative-mockup behavior) otherwise.
@@ -32,6 +53,7 @@ export default function CardPreview({ data, theme, live = false }) {
   const isGrad = t.bg.includes("gradient");
   const actSoc = SOCIALS.filter((s) => data.socials[s.key]);
   const shareUrl = getShareUrl(data);
+  const titleLine = formatTitleLine(data);
 
   // Only build a real, downloadable vCard blob when this card is "live"
   // (the public hosted page) — the builder's own Preview tab stays a pure
@@ -77,7 +99,7 @@ export default function CardPreview({ data, theme, live = false }) {
               <img className="card-preview__photo" src={data.photo} alt="" style={{ border: `3px solid ${t.accent}` }} />
             )}
             <div className="card-preview__name" style={{ color: t.text }}>{data.name || "Your Name"}</div>
-            {data.title && <div className="card-preview__title" style={{ color: t.sub }}>{data.title}</div>}
+            {titleLine && <div className="card-preview__title" style={{ color: t.sub }}>{titleLine}</div>}
             {data.company && <div className="card-preview__company" style={{ color: t.accent }}>{data.company}</div>}
             {data.bio && <div className="card-preview__bio" style={{ color: t.sub }}>{data.bio}</div>}
 
@@ -147,20 +169,7 @@ export default function CardPreview({ data, theme, live = false }) {
               </div>
             )}
 
-            <div className="card-preview__footer">
-              <div className="card-preview__brand" style={{ color: t.sub }}>
-                <img className="card-preview__brand-icon" src="/logo-icon.png" alt="" />
-                TapKonek — Connect with a Tap.
-              </div>
-              <a
-                className="card-preview__privacy"
-                href="/privacy"
-                onClick={(e) => e.stopPropagation()}
-                style={{ color: t.sub }}
-              >
-                Privacy
-              </a>
-            </div>
+            <BrandFooter sub={t.sub} />
           </div>
 
           <div className="card-preview__face card-preview__face--back" style={faceStyle}>
@@ -177,6 +186,7 @@ export default function CardPreview({ data, theme, live = false }) {
               </div>
             )}
             {shareUrl && <div className="card-preview__qr-url" style={{ color: t.sub }}>{shareUrl}</div>}
+            <BrandFooter sub={t.sub} />
           </div>
         </div>
       </div>
