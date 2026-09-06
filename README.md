@@ -35,6 +35,12 @@ npm run dev:full    # npx vercel dev — runs the app + /api together
 4. Optional: set `BUILDER_ACCESS_CODE` in the dashboard too, if you want to
    require a shared code before anyone can publish a *new* card (viewing
    and editing already-published cards is never gated by this).
+5. Optional: set `ADMIN_PASSWORD` to enable `/admin` — a page listing every
+   published card, with a "Reset edit link" button for anyone who lost
+   theirs. It issues a *fresh* edit link and invalidates the old one (edit
+   tokens are stored as a one-way hash, so the original is never
+   recoverable — by admin or anyone else). Leaving this unset disables
+   `/admin` entirely rather than leaving it open.
 
 Without step 2, the app still works fully as a design tool and the
 "Download HTML (PWA)" / "Download .vcf" static exports are unaffected —
@@ -46,9 +52,11 @@ only the "Publish Live Card" button will fail until Redis is connected.
 - `src/CardPreview.jsx` — the flip-card component, shared by the builder's
   own Preview tab and the public `/c/:slug` page
 - `src/PublicCardView.jsx` — the live, hosted card page
+- `src/AdminPage.jsx` — the `/admin` card directory + edit-link reset
 - `src/cardModel.js` — themes, vCard generation, the static-HTML export
-- `src/router.jsx` — a small hand-rolled router (`/`, `/edit/:slug`, `/c/:slug`)
-- `api/` — the Publish/Save/View serverless functions
+- `src/router.jsx` — a small hand-rolled router (`/`, `/edit/:slug`,
+  `/c/:slug`, `/privacy`, `/admin`)
+- `api/` — the Publish/Save/View serverless functions, plus `api/admin/`
 
 ---
 

@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import BuilderApp from "./BuilderApp";
 import PublicCardView from "./PublicCardView";
 import PrivacyPage from "./PrivacyPage";
+import AdminPage from "./AdminPage";
 
-// Deliberately no react-router dependency here — the app only ever has 3
-// real routes, and that library churns its API surface across major
-// versions (react-router-dom was removed entirely as of v8). A ~30-line
+// Deliberately no react-router dependency here — this app only ever has a
+// handful of simple routes, and that library churns its API surface across
+// major versions (react-router-dom was removed entirely as of v8). A small
 // hand-rolled router avoids that risk entirely.
 
 function parseRoute(pathname, search) {
@@ -23,6 +24,9 @@ function parseRoute(pathname, search) {
   }
   if (pathname === "/privacy" || pathname === "/privacy/") {
     return { view: "privacy" };
+  }
+  if (pathname === "/admin" || pathname === "/admin/") {
+    return { view: "admin" };
   }
   return { view: "not-found" };
 }
@@ -43,6 +47,7 @@ export default function Router() {
   if (route.view === "edit") return <BuilderApp key={route.slug} mode="edit" slug={route.slug} editToken={route.editToken} />;
   if (route.view === "public") return <PublicCardView key={route.slug} slug={route.slug} />;
   if (route.view === "privacy") return <PrivacyPage />;
+  if (route.view === "admin") return <AdminPage />;
 
   return (
     <div

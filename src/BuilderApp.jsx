@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import { THEMES, SOCIALS, DEFAULT, BLANK, generateNfcVCard, generateVCard, generatePWAHTML, getShareUrl, slugifyName } from "./cardModel";
 import CardPreview from "./CardPreview";
+import CopyField from "./CopyField";
 
 const ACCESS_CODE_KEY = "nfc_builder_access_code";
 
@@ -159,27 +160,6 @@ function NfcVCardSection({ data }) {
           For the best experience, use <strong>both</strong> methods: write your hosted URL to the NFC tag for the full rich card (with PWA offline caching), and keep a vCard-only NFC sticker as a backup for places with no signal.
         </div>
       </div>
-    </div>
-  );
-}
-
-function CopyField({ value }) {
-  const [copied, setCopied] = useState(false);
-  return (
-    <div className="copy-field">
-      <input className="copy-field__input" readOnly value={value} onFocus={(e) => e.target.select()} />
-      <button
-        type="button"
-        className="btn btn-upload"
-        onClick={() => {
-          navigator.clipboard.writeText(value).then(() => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1500);
-          });
-        }}
-      >
-        {copied ? "Copied!" : "Copy"}
-      </button>
     </div>
   );
 }

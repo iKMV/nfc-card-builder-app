@@ -60,7 +60,10 @@ export default function PrivacyPage() {
                 publishing a card gives you a private "edit link" containing a secret
                 token — that link is the only way to update your card later. We store
                 only a one-way cryptographic hash of that token, never the token
-                itself, so we can verify it without being able to reconstruct it.
+                itself, so we can verify it without being able to reconstruct it — not
+                even the person administering this TapKonek instance can recover a
+                lost link. If you lose yours, they can issue you a brand-new one
+                instead, which immediately replaces (and invalidates) the old one.
               </div>
             </div>
 
