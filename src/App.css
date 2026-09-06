@@ -162,38 +162,6 @@
   text-overflow: ellipsis;
 }
 
-.app-header__badge {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--success);
-  background: var(--success-bg);
-  border: 1px solid var(--success-border);
-  white-space: nowrap;
-}
-
-.app-header__badge .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--success);
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
-}
-
-@media (max-width: 480px) {
-  .app-header__badge { display: none; }
-}
-
 /* Tab bar — bottom nav on mobile, top nav on desktop */
 .tabbar {
   background: var(--nfc-surface);

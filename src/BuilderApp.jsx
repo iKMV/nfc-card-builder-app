@@ -298,10 +298,9 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
             <img className="app-header__logo" src="/logo-icon.png" alt="TapKonek" />
             <div className="app-header__text">
               <h1 className="app-header__title">TapKonek</h1>
-              <p className="app-header__subtitle">Connect with a Tap · Online + Offline</p>
+              <p className="app-header__subtitle">Connect with a Tap</p>
             </div>
           </div>
-          <span className="app-header__badge"><span className="dot" />Live preview</span>
         </div>
       </header>
 
