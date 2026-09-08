@@ -40,7 +40,10 @@ npm run dev:full    # npx vercel dev — runs the app + /api together
    theirs. It issues a *fresh* edit link and invalidates the old one (edit
    tokens are stored as a one-way hash, so the original is never
    recoverable — by admin or anyone else). Leaving this unset disables
-   `/admin` entirely rather than leaving it open.
+   `/admin` entirely rather than leaving it open. Logging in exchanges the
+   password for a short-lived session token (default 60 minutes, override
+   with `ADMIN_SESSION_MINUTES`) rather than remembering the password
+   itself, so a login left open eventually needs re-entering.
 
 Without step 2, the app still works fully as a design tool and the
 "Download HTML (PWA)" / "Download .vcf" static exports are unaffected —

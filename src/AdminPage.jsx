@@ -3,7 +3,31 @@ import "./App.css";
 import CopyField from "./CopyField";
 import { UI_ICON_SVG } from "./cardModel";
 
-const STORAGE_KEY = "tapkonek_admin_password";
+const STORAGE_KEY = "tapkonek_admin_session";
+
+// The admin session is a short-lived token issued by POST /api/admin/login
+// (see api/_lib/adminAuth.js) — the raw password is never stored here, only
+// this token + when it expires. Expiry is enforced server-side regardless
+// (any admin request with a lapsed token gets a 401 and bounces back to the
+// login gate — see loadCards/resetLink below); checking expiresAt here too
+// just avoids a doomed round-trip and reflects it faster in the UI.
+function readSession() {
+  try {
+    const parsed = JSON.parse(sessionStorage.getItem(STORAGE_KEY));
+    if (!parsed?.token || !parsed?.expiresAt) return null;
+    if (Date.now() >= parsed.expiresAt) {
+      sessionStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function clearSession() {
+  sessionStorage.removeItem(STORAGE_KEY);
+}
 
 function formatDate(iso) {
   if (!iso) return "—";
@@ -18,27 +42,27 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
   const [authError, setAuthError] = useState("");
-  const [checking, setChecking] = useState(() => !!sessionStorage.getItem(STORAGE_KEY));
+  const [checking, setChecking] = useState(() => !!readSession());
   const [cards, setCards] = useState([]);
-  const [loadState, setLoadState] = useState(() => (sessionStorage.getItem(STORAGE_KEY) ? "loading" : "idle"));
+  const [loadState, setLoadState] = useState(() => (readSession() ? "loading" : "idle"));
   const [resettingSlug, setResettingSlug] = useState(null);
   const [resetResults, setResetResults] = useState({});
   const [resetError, setResetError] = useState("");
 
   // Callers are responsible for setting loadState to "loading" themselves
   // before calling this — the initial useState above already covers the
-  // "checking a stored password on mount" case, so this function doesn't
+  // "checking a stored session on mount" case, so this function doesn't
   // need to (and doing it here as the first synchronous statement is what
   // was tripping the "don't setState synchronously inside an effect" lint
   // rule for the mount-time call path).
-  const loadCards = async (pwd) => {
+  const loadCards = async (token) => {
     try {
-      const res = await fetch("/api/admin/cards", { headers: { "X-Admin-Password": pwd } });
+      const res = await fetch("/api/admin/cards", { headers: { "X-Admin-Token": token } });
       if (res.status === 401 || res.status === 503) {
         const json = await res.json().catch(() => ({}));
         setAuthed(false);
         setAuthError(json.error || "Access denied");
-        sessionStorage.removeItem(STORAGE_KEY);
+        clearSession();
         setLoadState("idle");
         return;
       }
@@ -57,23 +81,41 @@ export default function AdminPage() {
 
   useEffect(() => {
     // `checking`'s initial value (above) already reflects whether there's a
-    // stored password to verify — nothing to do here if there wasn't one.
-    const stored = sessionStorage.getItem(STORAGE_KEY);
-    if (!stored) return;
+    // stored, not-yet-expired session to verify — nothing to do here if
+    // there wasn't one.
+    const session = readSession();
+    if (!session) return;
     let cancelled = false;
     (async () => {
-      await loadCards(stored);
+      await loadCards(session.token);
       if (!cancelled) setChecking(false);
     })();
     return () => { cancelled = true; };
   }, []);
 
-  const submitPassword = (e) => {
+  const submitPassword = async (e) => {
     e.preventDefault();
     setAuthError("");
     setLoadState("loading");
-    sessionStorage.setItem(STORAGE_KEY, password);
-    loadCards(password);
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setAuthError(json.error || "Access denied");
+        setLoadState("idle");
+        return;
+      }
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ token: json.token, expiresAt: json.expiresAt }));
+      setPassword("");
+      await loadCards(json.token);
+    } catch {
+      setAuthError("Network error — check your connection and try again.");
+      setLoadState("idle");
+    }
   };
 
   const resetLink = async (slug) => {
@@ -83,12 +125,24 @@ export default function AdminPage() {
     setResetError("");
     setResettingSlug(slug);
     try {
-      const pwd = sessionStorage.getItem(STORAGE_KEY);
+      const session = readSession();
+      if (!session) {
+        clearSession();
+        setAuthed(false);
+        setAuthError("Session expired — please log in again");
+        return;
+      }
       const res = await fetch(`/api/admin/cards/${slug}/reset-edit-link`, {
         method: "POST",
-        headers: { "X-Admin-Password": pwd },
+        headers: { "X-Admin-Token": session.token },
       });
       const json = await res.json().catch(() => ({}));
+      if (res.status === 401 || res.status === 503) {
+        clearSession();
+        setAuthed(false);
+        setAuthError(json.error || "Access denied");
+        return;
+      }
       if (!res.ok) {
         setResetError(json.error || `Reset failed (${res.status})`);
         return;
