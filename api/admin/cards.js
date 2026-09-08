@@ -37,6 +37,7 @@ export default async function handler(req, res) {
       title: card.data?.title || "",
       department: card.data?.department || "",
       company: card.data?.company || "",
+      country: card.data?.country || "",
       createdAt: card.createdAt,
       updatedAt: card.updatedAt,
     }))

@@ -123,6 +123,14 @@ export default function CardPreview({ data, theme, live = false }) {
                   <span style={{ color: t.sub }} dangerouslySetInnerHTML={{ __html: UI_ICON_SVG.globe }} />{data.website}
                 </ContactRow>
               )}
+              {data.country && (
+                // No href — a country isn't a link, just a label — so
+                // ContactRow always renders this as a plain row regardless
+                // of `live`.
+                <ContactRow style={{ color: t.text, borderBottom: `1px solid ${t.border}` }}>
+                  <span style={{ color: t.sub }} dangerouslySetInnerHTML={{ __html: UI_ICON_SVG.mapPin }} />{data.country}
+                </ContactRow>
+              )}
             </div>
 
             {actSoc.length > 0 && (

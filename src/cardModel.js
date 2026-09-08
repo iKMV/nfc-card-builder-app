@@ -120,6 +120,50 @@ export const THEMES = {
     border: "rgba(2,132,199,0.16)",
     font: "'Inter', system-ui, sans-serif",
   },
+  navy: {
+    name: "Navy",
+    bg: "#0a1e3f",
+    card: "rgba(255,255,255,0.07)",
+    text: "#f1f5f9",
+    sub: "#9fb3d1",
+    accent: "#4f8fe8",
+    accentText: "#ffffff",
+    border: "rgba(255,255,255,0.14)",
+    font: "'Inter', system-ui, sans-serif",
+  },
+  burgundy: {
+    name: "Burgundy",
+    bg: "#3f0d16",
+    card: "rgba(255,255,255,0.07)",
+    text: "#fdf2f2",
+    sub: "#d9a8ac",
+    accent: "#e6d5b8",
+    accentText: "#3f0d16",
+    border: "rgba(255,255,255,0.14)",
+    font: "'Georgia', serif",
+  },
+  graphite: {
+    name: "Graphite",
+    bg: "#20232a",
+    card: "rgba(255,255,255,0.06)",
+    text: "#f4f4f5",
+    sub: "#a1a1aa",
+    accent: "#2dd4bf",
+    accentText: "#0f172a",
+    border: "rgba(255,255,255,0.12)",
+    font: "'Inter', system-ui, sans-serif",
+  },
+  ivory: {
+    name: "Ivory",
+    bg: "#faf6ef",
+    card: "#ffffff",
+    text: "#2b2620",
+    sub: "#8a8272",
+    accent: "#9c6b30",
+    accentText: "#ffffff",
+    border: "#e8e0d0",
+    font: "'Georgia', serif",
+  },
 };
 
 // Small vector icons for the builder's own chrome (tab bar, section chips,
@@ -138,6 +182,7 @@ export const UI_ICON_SVG = {
   phone: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 3.5 9.3 4l1.2 4-2 1.6a12.5 12.5 0 0 0 6 6l1.5-2 4 1.3v2.7c0 1.2-1 2.1-2.2 2C10.6 18.7 5.3 13.4 4.6 6.2c-.1-1.2.8-2.2 2-2.7Z"/></svg>`,
   envelope: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg>`,
   globe: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.4 4 5.6 4 9s-1.4 6.6-4 9c-2.6-2.4-4-5.6-4-9s1.4-6.6 4-9Z"/></svg>`,
+  mapPin: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5s7-6.3 7-12A7 7 0 0 0 5 9.5c0 5.7 7 12 7 12Z"/><circle cx="12" cy="9.5" r="2.4"/></svg>`,
   link: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M11 6.3 12.4 5a4 4 0 0 1 5.6 5.7L16.5 12"/><path d="M13 17.7 11.6 19a4 4 0 0 1-5.6-5.7L7.5 12"/></svg>`,
   palette: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.9-.9 1.9-1.9 0-.5-.2-.9-.5-1.3-.3-.3-.5-.7-.5-1.2 0-1 .9-1.9 1.9-1.9H16a4 4 0 0 0 4-4A8 8 0 0 0 12 3Z"/><circle cx="7.3" cy="10.8" r="1.15" fill="currentColor" stroke="none"/><circle cx="10.5" cy="7.2" r="1.15" fill="currentColor" stroke="none"/><circle cx="15" cy="7.8" r="1.15" fill="currentColor" stroke="none"/></svg>`,
   upload: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M7.5 8.5 12 4l4.5 4.5"/><path d="M4 15v3.5A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5V15"/></svg>`,
@@ -190,6 +235,7 @@ export const BLANK = {
   title: "",
   department: "",
   company: "",
+  country: "",
   bio: "",
   phone: "",
   email: "",
@@ -205,6 +251,7 @@ export const DEFAULT = {
   title: "Product Designer",
   department: "Design Team",
   company: "Studio Nova",
+  country: "United States",
   bio: "Crafting digital experiences that feel effortless.",
   phone: "+1 (555) 123-4567",
   email: "alex@studionova.co",
@@ -222,6 +269,15 @@ export const DEFAULT = {
 function orgField(d) {
   if (!d.company && !d.department) return "";
   return `ORG:${d.company || ""}${d.department ? ";" + d.department : ""}`;
+}
+
+// vCard's ADR property is 7 semicolon-separated components (PO Box;
+// Extended;Street;City;Region;PostalCode;Country) — there's no street-level
+// address in the builder, just a single "Country" field, so every slot but
+// the last stays empty rather than being approximated.
+function addressField(d) {
+  if (!d.country) return "";
+  return `ADR;TYPE=WORK:;;;;;;${d.country}`;
 }
 
 // vCard 3.0 requires the structured N property (Family;Given;Additional;
@@ -270,7 +326,7 @@ function photoField(d) {
 export function generateVCard(d) {
   return [
     "BEGIN:VCARD", "VERSION:3.0", nameField(d.name), `FN:${d.name}`,
-    d.title ? `TITLE:${d.title}` : "", orgField(d),
+    d.title ? `TITLE:${d.title}` : "", orgField(d), addressField(d),
     d.phone ? `TEL;TYPE=CELL:${d.phone}` : "", d.email ? `EMAIL:${d.email}` : "",
     d.website ? `URL:${d.website.startsWith("http") ? d.website : "https://" + d.website}` : "",
     d.bio ? `NOTE:${d.bio}` : "", photoField(d),
@@ -282,7 +338,7 @@ export function generateVCard(d) {
 export function generateNfcVCard(d) {
   return [
     "BEGIN:VCARD", "VERSION:3.0", nameField(d.name), `FN:${d.name}`,
-    d.title ? `TITLE:${d.title}` : "", orgField(d),
+    d.title ? `TITLE:${d.title}` : "", orgField(d), addressField(d),
     d.phone ? `TEL:${d.phone}` : "", d.email ? `EMAIL:${d.email}` : "",
     d.website ? `URL:${d.website.startsWith("http") ? d.website : "https://" + d.website}` : "",
     "END:VCARD",
@@ -368,7 +424,7 @@ body{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-
 .qe{max-width:220px;font-size:13px;line-height:1.5;color:${t.sub}}
 .qu{max-width:260px;font-size:12px;font-family:ui-monospace,Consolas,monospace;word-break:break-all;color:${t.sub}}
 .ph{display:block;width:100px;height:100px;margin:0 auto 16px;border-radius:50%;object-fit:cover;border:3px solid ${t.accent}}
-.lo{display:block;height:24px;max-width:100px;margin:0 auto 12px;object-fit:contain}
+.lo{display:block;height:36px;max-width:130px;margin:0 auto 12px;object-fit:contain}
 h1{font-size:24px;font-weight:700;margin-bottom:4px;letter-spacing:-.01em}
 .ti{color:${t.sub};font-size:15px;margin-bottom:2px}
 .co{color:${t.accent};font-size:14px;font-weight:600;margin-bottom:12px}
@@ -410,6 +466,7 @@ h1{font-size:24px;font-weight:700;margin-bottom:4px;letter-spacing:-.01em}
         ${data.phone ? `<div class="r"><span>${UI_ICON_SVG.phone}</span><a href="tel:${data.phone}" onclick="event.stopPropagation()">${data.phone}</a></div>` : ""}
         ${data.email ? `<div class="r"><span>${UI_ICON_SVG.envelope}</span><a href="mailto:${data.email}" onclick="event.stopPropagation()">${data.email}</a></div>` : ""}
         ${data.website ? `<div class="r"><span>${UI_ICON_SVG.globe}</span><a href="${siteUrl}" target="_blank" onclick="event.stopPropagation()">${data.website}</a></div>` : ""}
+        ${data.country ? `<div class="r"><span>${UI_ICON_SVG.mapPin}</span><span>${data.country}</span></div>` : ""}
       </div>
       ${socialLinks ? `<div class="sc">${socialLinks}</div>` : ""}
       <a class="sv" href="data:text/vcard;base64,${vcB64}" download="${data.name.replace(/\s+/g, "_")}.vcf" onclick="event.stopPropagation()">${SAVE_ICON_SVG}Save Contact</a>

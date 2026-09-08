@@ -421,6 +421,10 @@ export default function BuilderApp({ mode = "create", slug, editToken }) {
                       <label>Website</label>
                       <input value={data.website} onChange={(e) => update("website", e.target.value)} />
                     </div>
+                    <div className="field">
+                      <label>Country</label>
+                      <input value={data.country} onChange={(e) => update("country", e.target.value)} placeholder="e.g. Philippines" />
+                    </div>
                   </>
                 )}
 

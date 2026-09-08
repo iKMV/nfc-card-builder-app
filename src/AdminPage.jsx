@@ -225,6 +225,7 @@ export default function AdminPage() {
                 <div className="info-card__desc">
                   {[c.title, c.department].filter(Boolean).join(" - ")}
                   {c.company ? ` · ${c.company}` : ""}
+                  {c.country ? ` · ${c.country}` : ""}
                 </div>
                 <div className="hint-text">
                   <code>{c.slug}</code> · created {formatDate(c.createdAt)} · updated {formatDate(c.updatedAt)}
