@@ -368,7 +368,7 @@ body{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-
 .qe{max-width:220px;font-size:13px;line-height:1.5;color:${t.sub}}
 .qu{max-width:260px;font-size:12px;font-family:ui-monospace,Consolas,monospace;word-break:break-all;color:${t.sub}}
 .ph{display:block;width:100px;height:100px;margin:0 auto 16px;border-radius:50%;object-fit:cover;border:3px solid ${t.accent}}
-.lo{display:block;height:32px;margin:0 auto 12px;object-fit:contain}
+.lo{display:block;height:24px;max-width:100px;margin:0 auto 12px;object-fit:contain}
 h1{font-size:24px;font-weight:700;margin-bottom:4px;letter-spacing:-.01em}
 .ti{color:${t.sub};font-size:15px;margin-bottom:2px}
 .co{color:${t.accent};font-size:14px;font-weight:600;margin-bottom:12px}

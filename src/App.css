@@ -940,7 +940,8 @@
 
 .card-preview__logo {
   display: block;
-  height: 28px;
+  height: 22px;
+  max-width: 90px;
   margin: 0 auto 10px;
   object-fit: contain;
 }
