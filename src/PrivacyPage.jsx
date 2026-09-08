@@ -1,5 +1,32 @@
 import "./App.css";
 
+// This app's router (see router.jsx) doesn't intercept link clicks — every
+// navigation is a real, full-page one — so a plain href="/" here would
+// always land on the blank builder home, even for someone who reached this
+// page from a specific published card's footer. Going back through actual
+// browser history instead returns to wherever they really came from.
+//
+// document.referrer (not history.length) is what decides whether to do
+// that: a fresh tab can already report history.length > 1 (the initial
+// blank entry counts), which sent the no-prior-visit case to about:blank
+// instead of falling back to "/" — caught by testing this against a real
+// browser, not just reasoning about it. Checking that the referrer is
+// same-origin is the direct, unambiguous signal for "did I actually get
+// here via a link from this app". href stays as the "/" fallback for a
+// direct visit (no referrer, or one from outside the app) and for modified
+// clicks (new tab/window), which should bypass this and use the plain link.
+function goBack(e) {
+  if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  try {
+    if (document.referrer && new URL(document.referrer).origin === window.location.origin) {
+      e.preventDefault();
+      window.history.back();
+    }
+  } catch {
+    // Malformed referrer — fall through to the plain href="/" navigation.
+  }
+}
+
 export default function PrivacyPage() {
   return (
     <div className="app" style={{ "--accent": "#2563eb", "--accent-text": "#ffffff" }}>
@@ -17,7 +44,7 @@ export default function PrivacyPage() {
 
       <main className="main">
         <div style={{ maxWidth: 720, margin: "0 auto", padding: "28px 20px 60px" }}>
-          <a href="/" className="hint-text" style={{ display: "inline-block", marginBottom: 20 }}>← Back to TapKonek</a>
+          <a href="/" onClick={goBack} className="hint-text" style={{ display: "inline-block", marginBottom: 20 }}>← Back to TapKonek</a>
 
           <div className="stack">
             <div className="info-card">
