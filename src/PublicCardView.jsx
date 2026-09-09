@@ -40,11 +40,30 @@ function CardSkeleton() {
   );
 }
 
+// A card that's already cached/fast can resolve in well under 100ms, which
+// makes the branded skeleton (see CardSkeleton below) flash by too quickly
+// to register as an intentional moment rather than a glitch. Floors the
+// skeleton's display time at this long, never *adds* delay beyond what a
+// slower load already takes on its own.
+const MIN_SKELETON_MS = 500;
+
 export default function PublicCardView({ slug }) {
   const [state, setState] = useState({ status: "loading", data: null });
 
   useEffect(() => {
     let cancelled = false;
+    let timeoutId;
+    const startedAt = Date.now();
+
+    // Delays applying `next` just enough to make up the difference to
+    // MIN_SKELETON_MS — a no-op once a load has already taken that long.
+    const finish = (next) => {
+      const wait = Math.max(0, MIN_SKELETON_MS - (Date.now() - startedAt));
+      timeoutId = setTimeout(() => {
+        if (!cancelled) setState(next);
+      }, wait);
+    };
+
     // Note: this effect relies on the router remounting PublicCardView with
     // a fresh `key={slug}` whenever the slug changes (see router.jsx), so
     // `state` always starts back at "loading" for a new slug without this
@@ -52,13 +71,14 @@ export default function PublicCardView({ slug }) {
     fetch(`/api/cards/${slug}`)
       .then(async (res) => {
         if (cancelled) return;
-        if (res.status === 404) { setState({ status: "not-found" }); return; }
-        if (!res.ok) { setState({ status: "error" }); return; }
+        if (res.status === 404) { finish({ status: "not-found" }); return; }
+        if (!res.ok) { finish({ status: "error" }); return; }
         const json = await res.json();
-        setState({ status: "ready", data: json.data });
+        finish({ status: "ready", data: json.data });
       })
-      .catch(() => { if (!cancelled) setState({ status: "error" }); });
-    return () => { cancelled = true; };
+      .catch(() => { if (!cancelled) finish({ status: "error" }); });
+
+    return () => { cancelled = true; clearTimeout(timeoutId); };
   }, [slug]);
 
   useEffect(() => {
