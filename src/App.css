@@ -1151,11 +1151,18 @@ a.card-preview__cta:active {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
-.card-skeleton__avatar {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 16px;
-  border-radius: 50%;
+.card-skeleton__logo {
+  display: block;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 18px;
+  object-fit: contain;
+  animation: skeleton-logo-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-logo-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1); }
 }
 
 .card-skeleton__bar {
@@ -1191,7 +1198,6 @@ a.card-preview__cta:active {
   border-radius: 12px;
 }
 
-.card-skeleton__avatar,
 .card-skeleton__bar,
 .card-skeleton__cta {
   background: linear-gradient(90deg, #eceef1 25%, #f6f7f8 37%, #eceef1 63%);

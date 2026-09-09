@@ -26,7 +26,7 @@ function CardSkeleton() {
   return (
     <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f1f3f5" }}>
       <div className="card-skeleton">
-        <div className="card-skeleton__avatar" />
+        <img className="card-skeleton__logo" src="/logo-icon.png" alt="TapKonek" />
         <div className="card-skeleton__bar card-skeleton__bar--name" />
         <div className="card-skeleton__bar card-skeleton__bar--title" />
         <div className="card-skeleton__rows">
